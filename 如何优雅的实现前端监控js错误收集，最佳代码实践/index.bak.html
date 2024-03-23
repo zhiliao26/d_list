@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>如何优雅的实现前端监控js错误收集，最佳代码实践</title>
+  <meta http-equiv="Expires" content="0">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Cache-control" content="no-cache">
+  <meta http-equiv="Cache" content="no-cache">
+</head>
+
+<body>
+  <img src="./xxx.jpg" alt="" srcset="">
+</body>
+
+<script>
+  // 监听资源加载错误
+  window.addEventListener('error', (e) => {
+    console.log('资源加载错误', e);
+  }, true);
+
+  // 监听js错误
+  window.onerror = function (msg, url, line, col, error) {
+    console.log('js错误', msg, url, line, col, error);
+    return true;
+  }
+
+  // 监听promise错误
+  window.addEventListener('unhandledrejection', (e) => {
+    console.log('promise错误', e);
+  });
+
+  // 监听ajax错误
+  window.addEventListener('ajaxError', (e) => {
+    console.log('ajax错误', e);
+  });
+
+  // 监听fetch错误
+  window.addEventListener('fetchError', (e) => {
+    console.log('fetch错误', e);
+  });
+
+  // 监听console错误
+  window.addEventListener('consoleError', (e) => {
+    console.log('console错误', e);
+  });
+
+  // 监听vue错误
+  window.addEventListener('vueError', (e) => {
+    console.log('vue错误', e);
+  });
+
+  // 监听react错误
+  window.addEventListener('reactError', (e) => {
+    console.log('react错误', e);
+  });
+
+  // 监听angular错误
+  window.addEventListener('angularError', (e) => {
+    console.log('angular错误', e);
+  });
+
+  // 监听react-router错误
+  window.addEventListener('reactRouterError', (e) => {
+    console.log('react-router错误', e);
+  });
+
+  // 监听vue-router错误
+  window.addEventListener('vueRouterError', (e) => {
+    console.log('vue-router错误', e);
+  });
+
+  // 监听vuex错误
+  window.addEventListener('vuexError', (e) => {
+    console.log('vuex错误', e);
+  });
+
+  // 监听redux错误
+  window.addEventListener('reduxError', (e) => {
+    console.log('redux错误', e);
+  });
+
+  // 监听mobx错误
+  window.addEventListener('mobxError', (e) => {
+    console.log('mobx错误', e);
+  });
+
+  // 监听rxjs错误
+  window.addEventListener('rxjsError', (e) => {
+    console.log('rxjs错误', e);
+  });
+
+</script>
+
+</html>

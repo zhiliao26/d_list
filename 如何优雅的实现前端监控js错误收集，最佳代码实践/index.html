@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>如何优雅的实现前端监控js错误收集，最佳代码实践</title>
+  <meta http-equiv="Expires" content="0">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Cache-control" content="no-cache">
+  <meta http-equiv="Cache" content="no-cache">
+</head>
+
+<body>
+  <img src="./xxx.jpg">
+
+</body>
+<script>
+  // 1 异常捕获 异步无法捕获
+  // setTimeout(() => {
+  //   try {
+  //     console.log('1->begin')
+  //     error
+  //     console.log('1->end')
+  //   } catch (e) {
+  //     console.log('1->catch', e)
+  //   }
+  // });
+
+  // 2 堆栈异常捕获 异步无法捕获
+  // function fn () {
+  //   console.log('1->begin')
+  //   error
+  //   console.log('1->end')
+  // }
+  // setTimeout(() => {
+  //   try {
+  //     fn()
+  //   } catch (e) {
+  //     console.log('1->catch', e)
+  //   }
+  // });
+
+  // 3 try catch 异常捕获不到
+  // function fn () {
+  //   console.log('1->begin')
+  //   error
+  //   console.log('1->end')
+  // }
+  // try {
+  //   setTimeout(() => {
+  //     fn()
+  //   });
+  // } catch (e) {
+  //   console.log('1->catch', e) // 异步无法捕获
+  // }
+
+  // 4使用 onerror 捕获异常 但是无法捕获 js加载和图片加载类似 src 的网络错误（资源加载错误） 例：<img src="./xxx.jpg">
+  // 异步无法捕获
+  // function fn () {
+  //   console.log('1->begin')
+  //   error
+  //   console.log('1->end')
+  // }
+
+  // window.onerror = function (...args) {
+  //   console.log('1->catch', args)
+  // }
+
+  // // window.onerror = function (msg, url, line, col, error) {
+  // //   console.log('js错误', msg, url, line, col, error);
+  // // }
+
+  // setTimeout(() => {
+  //   fn()
+  // });
+
+  // 5 addEventListener('error') 利用捕获阶段处理 可以捕获资源加载错误 js加载和图片加载类似 src 的网络错误（资源加载错误）
+  // 异步无法捕获
+  // function fn () {
+  //   console.log('1->begin')
+  //   error
+  //   console.log('1->end')
+  // }
+  // window.addEventListener('error', (e) => {
+  //   console.log('资源加载错误', e);
+  //   return true;
+  // },
+  //   true // 利用捕获阶段处理
+  // );
+  // setTimeout(() => {
+  //   fn()
+  // });
+
+
+  // // 6 监听promise错误 不使用 catch
+  // new Promise((resolve, reject) => {
+  //   error()
+  // })
+  // // .catch(e => {
+  // //   console.log('promise error', e)
+  // // })
+
+  // let aysncFn = () => new Promise(() => {
+  //   error2
+  // })
+
+  // setTimeout(async () => {
+  //   await aysncFn()
+  // });
+
+  // window.addEventListener('unhandledrejection', (e) => {
+  //   console.log('promise错误', e);
+  // });
+
+
+  /**
+   * 总结 ：最佳实践
+   */
+  window.addEventListener('error', (e) => {
+    console.log('addEventListener-error', e);
+    return true;
+  },
+    true // 利用捕获阶段处理
+  );
+
+  window.addEventListener('unhandledrejection', (e) => {
+    // console.log('unhandledrejection', e)
+    throw e.reason;
+  });
+
+  let aysncFn = () => new Promise(() => {
+    throw 'promise error'
+  })
+
+  setTimeout(async () => {
+    await aysncFn()
+  });
+
+  function fn () {
+    console.log('1->begin')
+    throw 'fn error'
+    console.log('1->end')
+  }
+  // 同步错误
+  fn()
+
+
+
+</script>
+
+
+</html>
