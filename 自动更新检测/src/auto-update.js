@@ -1,0 +1,57 @@
+let lastSrcs // 上一次获取到的script地址
+
+// const scriptReg = /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi
+
+const scriptReg = /\<script.*src=["'](?<src>[^"']+)/gm
+
+/**
+ * 获取最新页面中的script链接
+ */
+
+async function extractNewScripts() {
+	const html = await fetch('/?_timestamp=' + Date.now()).then((resp) => resp.text())
+	scriptReg.lastIndex = 0
+	let result = []
+	let match
+	while ((match = scriptReg.exec(html))) {
+		result.push(match.groups.src)
+	}
+	return result
+}
+
+async function needUpdate() {
+	const newScripts = await extractNewScripts()
+	if (!lastSrcs) {
+		lastSrcs = newScripts
+		return false
+	}
+	let result = false
+	if (lastSrcs.length !== newScripts.length) {
+		result = true
+	}
+	for (let i = 0; i < lastSrcs.length; i++) {
+		if (lastSrcs[i] !== newScripts[i]) {
+			result = true
+			break
+		}
+	}
+	lastSrcs = newScripts
+	return result
+}
+
+const DURATION = 2000 // 1000 * 60 * 5 // 5分钟检查一次
+function autoRefresh() {
+  console.log('autoRefresh')
+	setTimeout(async () => {
+		const willUpdate = await needUpdate()
+		if (willUpdate) {
+			const result = confirm('检测到页面有更新，是否刷新页面？')
+			if (result) {
+				location.reload()
+			}
+		}
+		autoRefresh()
+	}, DURATION)
+}
+
+autoRefresh()
